@@ -1,0 +1,17 @@
+{
+  "name": "mini-vue3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsdom": "^20.0.2",
+    "vitest": "^0.24.3"
+  },
+  "type": "module"
+}

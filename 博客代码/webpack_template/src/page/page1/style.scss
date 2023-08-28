@@ -1,0 +1,13 @@
+@import url('../../assets/common.scss');
+
+body {
+    color: red;
+    height: 100vh;
+    background: url('../../assets/images/Snipaste_2023-02-22_12-22-31.png');
+}
+
+div {
+    display: flex;
+    transform: rotate(360deg);
+    box-shadow: 0;
+}

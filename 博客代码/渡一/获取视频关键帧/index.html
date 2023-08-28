@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" name="" id="i1" />
+    <br />
+    <input type="file" name="" id="i2" />
+    <script type="module">
+        import { VideoCapture, captureVideo } from './index.js'
+        const inputEl = document.querySelector('#i1')
+        inputEl.onchange = async (e) => {
+            const files = e.target.files
+            if (!files || !files.length) {
+                throw new Error('没有文件')
+            }
+
+            const instance = new VideoCapture(files[0]);
+            await instance.load();
+            for (let i = 0; i < 10; i++) {
+                await instance.setTime(i * 1000);
+                const src = await instance.draw();
+                await instance.appendImage(src);
+            }
+
+        }
+
+        const inputEl2 = document.querySelector('#i2')
+        inputEl2.onchange = (e) => {
+            const files = e.target.files
+            if (!files || !files.length) {
+                throw new Error('没有文件')
+            }
+
+
+            for (let i = 0; i < 10; i++) {
+                captureVideo(files[0], i * 1000)
+            }
+
+        }
+    </script>
+</body>
+
+</html>

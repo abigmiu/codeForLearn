@@ -1,0 +1,36 @@
+body {
+  margin: 0;
+  background-color: #131313;
+}
+body.loaded {
+  height: 5000px;
+}
+
+#sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  position: relative;
+  margin-top: -100px;
+}
+p.left, p.right {
+  font-size: 28px;
+  color: #fff;
+  font-family: Helvetica;
+  font-weight: bold;
+  position: absolute;
+  top: 45%;
+  opacity: 0;
+}
+p.left {
+  left: 50%;
+}
+r.right {
+  right: 50%;
+}

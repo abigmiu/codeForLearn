@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "serve": "^13.0.2"
+  },
+  "scripts": {
+    "dev": "live-server"
+  },
+  "name": "customVue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/abigmiu/customVue.git",
+  "author": "abigmiu <1552487872@qq.com>",
+  "license": "MIT"
+}
