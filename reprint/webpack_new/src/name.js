@@ -1,0 +1,1 @@
+module.exports = '作者名'
