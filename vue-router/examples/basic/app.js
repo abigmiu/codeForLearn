@@ -25,6 +25,7 @@ window.removeEventListener = function (name, handler) {
   return originalRemoveEventListener.apply(this, arguments)
 }
 
+debugger
 // 1. Use plugin.
 // This installs <router-view> and <router-link>,
 // and injects $router and $route to all router-enabled child components

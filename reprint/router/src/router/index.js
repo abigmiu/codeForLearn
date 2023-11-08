@@ -1,101 +1,40 @@
-// 路径状态
+import { createMatcher } from './create-matcher'
+import install from './install'
+import HashHistory from './history/hash'
 
-class HistoryRoute {
-  constructor () {
-    this.current = null
-  }
-}
-
-class Router {
+export default class VueRouter {
   constructor (options) {
+    this.app = null
+    this.apps = []
+
+    this.options = options
+
+    this.matcher = createMatcher(options.routes || [], this)
+
     this.mode = options.mode || 'hash'
-    this.routes = options.routes || []
-    this.routesMap = this.createMap(this.routes)
-    this.history = new HistoryRoute()
+
+    this.history = new HashHistory(this)
   }
 
-  init () {
-    // 处理路由模式
-    if (this.mode === 'hash') {
-      if (!location.hash) {
-        location.hash = '/'
-      }
-      window.addEventListener('load', () => {
-        this.history.current = location.hash.slice(1)
-      })
-      window.addEventListener('hashchange', () => {
-        this.history.current = location.hash.slice(1)
-      })
-    } else {
-      if (!location.pathname) {
-        location.pathname = '/'
-      }
-      window.addEventListener('load', () => {
-        this.history.current = location.pathname
-      })
-      window.addEventListener('popstate', () => {
-        this.history.current = location.pathname
-      })
+  init(app) {
+    const history = this.history;
+
+    const setupHashListener = () => {
+        history.setupListener();
     }
+
+    history.transitionTo(history.getCurrentLocation(), setupHashListener)
+
+    history.listen((route) => {
+        console.log(app, route);
+        debugger
+        app._route = route;
+    })
   }
 
-  createMap (routes) {
-    return routes.reduce((pre, cur) => {
-      pre[cur.path] = cur.component
-      return pre
-    }, {})
-  }
-
-  install (Vue) {
-    Vue.mixin({
-      beforeCreate () {
-        if (this.$options && this.$options.router) {
-          this._root = this
-          this.$router = this.$options.router
-
-          // 响应式化
-          Vue.util.defineReactive(this, 'xxxx', this._router.history)
-        } else if (this.$parent && this.$parent.$router) {
-          this._root = this.$parent._root
-        }
-
-        Object.defineProperty(this, '$router', {
-          get () {
-            return this._root.$router
-          }
-        })
-
-        Object.defineProperty(this, '$route', {
-          get () {
-            return this._root._router.history.current
-          }
-        })
-      }
-    })
-
-    Vue.component('router-link', {
-      props: {
-        to: String
-      },
-      render (h) {
-        const mode = this._self._root._router.mode
-        const to = mode === 'hash' ? '#' + this.to : this.to
-        return h('a', {
-          attrs: {
-            href: to
-          }
-
-        }, this.$slots.default)
-      }
-    })
-    Vue.component('router-view', {
-      render (h) {
-        const current = this._self._root._router.history.current
-        const routeMap = this._self._root._router.routesMap
-        return h(routeMap[current])
-      }
-    })
+  match(location) {
+    return this.matcher.match(location)
   }
 }
 
-export default Router()
+VueRouter.install = install
