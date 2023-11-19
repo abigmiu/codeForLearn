@@ -38,6 +38,7 @@ const Baz = {
     </div>
   `,
   beforeRouteLeave (to, from, next) {
+    debugger
     if (
       this.saved ||
       window.confirm('Not saved, are you sure you want to navigate away?')
