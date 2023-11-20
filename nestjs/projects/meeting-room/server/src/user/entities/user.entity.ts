@@ -5,6 +5,7 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
+    Unique,
     UpdateDateColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
@@ -19,6 +20,7 @@ export class User {
     @Column({
         length: 50,
         comment: '用户名',
+        unique: true,
     })
     username: string;
 
@@ -29,11 +31,31 @@ export class User {
     password: string;
 
     @Column({
-        length: 50,
         name: 'nick_name',
+        length: 50,
         comment: '昵称',
     })
     nickName: string;
+
+    @Column({
+        comment: '邮箱',
+        length: 50,
+    })
+    email: string;
+
+    @Column({
+        comment: '头像',
+        length: 100,
+        nullable: true,
+    })
+    headPic: string;
+
+    @Column({
+        comment: '手机号',
+        length: 20,
+        nullable: true,
+    })
+    phoneNumber: string;
 
     @Column({
         comment: '是否冻结',
