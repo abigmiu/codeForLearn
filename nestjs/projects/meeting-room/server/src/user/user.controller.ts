@@ -1,20 +1,9 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    Query,
-    Inject,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Inject } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -45,5 +34,26 @@ export class UserController {
         });
 
         return '发送成功';
+    }
+
+    @Get('init-data')
+    async initData() {
+        await this.userService.initData();
+        return 'done';
+    }
+
+    @Post('login')
+    async userLogin(@Body() loginUser: LoginUserDto) {
+        return this.userService.login(loginUser, false);
+    }
+
+    @Post('admin/login')
+    async adminLogin(@Body() loginUser: LoginUserDto) {
+        return this.userService.login(loginUser, true);
+    }
+
+    @Get('refresh')
+    refresh(@Query('refreshToken') refreshToken: string) {
+        return this.userService.refresh(refreshToken);
     }
 }
