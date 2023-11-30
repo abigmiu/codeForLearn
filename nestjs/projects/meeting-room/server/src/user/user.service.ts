@@ -21,6 +21,8 @@ import { ConfigService } from '@nestjs/config';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RefreshTokenVo } from './vo/refresh-token.vo';
+import { UserListVo } from './vo/user-list.vo';
 
 @Injectable()
 export class UserService {
@@ -252,10 +254,12 @@ export class UserService {
                 },
             );
 
-            return {
-                access_token,
-                refresh_token,
-            };
+            const vo = new RefreshTokenVo();
+
+            vo.access_token = access_token;
+            vo.refresh_token = refresh_token;
+
+            return vo;
         } catch (e) {
             throw new UnauthorizedException('token 已失效，请重新登录');
         }
@@ -412,9 +416,10 @@ export class UserService {
             where: condition,
         });
 
-        return {
-            users,
-            totalCount,
-        };
+        const vo = new UserListVo();
+
+        vo.users = users;
+        vo.totalCount = totalCount;
+        return vo;
     }
 }
