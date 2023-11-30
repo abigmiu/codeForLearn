@@ -10,6 +10,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    app.enableCors();
     app.setGlobalPrefix('/api');
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalInterceptors(new FormatResponseInterceptor());
@@ -17,6 +18,10 @@ async function bootstrap() {
     app.useGlobalFilters(new UnloginFilter());
     app.useGlobalFilters(new CustomExceptionFilter());
     const configService = app.get(ConfigService);
+
+    app.useStaticAssets('uploads', {
+        prefix: '/uploads',
+    });
 
     const config = new DocumentBuilder()
         .setTitle('会议室预订系统')

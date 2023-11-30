@@ -5,10 +5,11 @@ import {
     Body,
     Query,
     Inject,
-    ParseIntPipe,
-    BadRequestException,
     DefaultValuePipe,
     HttpStatus,
+    UploadedFile,
+    UseInterceptors,
+    BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -29,6 +30,9 @@ import {
 import { LoginUserVo } from './vo/login.vo';
 import { RefreshTokenVo } from './vo/refresh-token.vo';
 import { UserDetailVo } from './vo/user-info.vo';
+import { FileInterceptor } from '@nestjs/platform-express';
+import path from 'path';
+import { storage } from 'src/my-file-storage';
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -306,5 +310,25 @@ export class UserController {
             pageNo,
             pageSize,
         );
+    }
+
+    @Post('upload')
+    @UseInterceptors(
+        FileInterceptor('file', {
+            dest: 'uploads',
+            storage: storage,
+            fileFilter(req, file, callback) {
+                const extname = path.extname(file.originalname);
+                if (['.png', '.jpg', '.gif'].includes(extname)) {
+                    callback(null, true);
+                } else {
+                    callback(new BadRequestException('只能上传图片'), false);
+                }
+            },
+        }),
+    )
+    uploadFile(@UploadedFile() file: Express.Multer.File) {
+        console.log('file', file);
+        return file.path;
     }
 }

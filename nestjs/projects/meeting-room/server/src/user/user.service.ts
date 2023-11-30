@@ -129,6 +129,7 @@ export class UserService {
                 username: userInfo.username,
                 roles: userInfo.roles,
                 permissions: userInfo.permissions,
+                email: userInfo.email,
             },
             {
                 expiresIn: this.configService.get(
@@ -209,6 +210,7 @@ export class UserService {
             id: user.id,
             username: user.username,
             isAdmin: user.isAdmin,
+            email: user.email,
             roles: user.roles.map((item) => item.name),
             permissions: user.roles.reduce((arr, item) => {
                 item.permissions.forEach((permission) => {
@@ -233,6 +235,7 @@ export class UserService {
                     username: user.username,
                     roles: user.roles,
                     permissions: user.permissions,
+                    email: user.email,
                 },
                 {
                     expiresIn:
