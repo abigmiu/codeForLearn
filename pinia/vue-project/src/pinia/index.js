@@ -1,4 +1,4 @@
-import { computed, reactive } from "vue";
+import { computed, effectScope, getCurrentInstance, inject, reactive } from "vue";
 
 let piniaInstance;
 
@@ -16,11 +16,36 @@ const piniaSymbol = Symbol('pinia')
  * @returns 
  */
 export const createPinia = () => {
+    const scope = effectScope(true);
+    const state = scope.run(() => ref({}));
+
+    // 插件列表
+    let _p = [];
+    // 在调用 app.use(pinia) 前需要安装的插件
+    let toBeInstalled = [];
+
     const pinia = {
+        _a: null,
+        _p,
+        _e: scope,
+        _s: new Map(), // store 缓存，
+        state,      // pinia 所有的 state 的合集，key 为 pinia 的 id，value 为 store 下所有的 state
         install(app, options) {
+            pinia._a = app;
             setActivePinia(pinia);
             app.config.globalProperties.$pinia = pinia;
-            app.provide(piniaSymbol, pinia)
+            app.provide(piniaSymbol, pinia);
+
+            toBeInstalled.forEach((plugin) => _p.push(plugin));
+            toBeInstalled = [];
+        },
+        use(plugin) {
+            if (!this._a) {
+                toBeInstalled.push(plugin);
+            } else {
+                _p.push(plugin);
+            }
+            return this;
         },
         cache: new Map()
     }
@@ -46,7 +71,7 @@ function createOptionsStore(id, options, pinia) {
         )
     }
 
-    store =  createSetupStore(id, setup, pinia);
+    store = createSetupStore(id, setup, pinia);
     return store;
 }
 
@@ -63,8 +88,13 @@ function createSetupStore(id, setup, pinia) {
 }
 
 export function defineStore(id, options) {
-    function useStore() {
-        const pinia = getActivePinia();
+    function useStore(pinia) {
+        const currentInstance = getCurrentInstance();
+
+        pinia = currentInstance && inject(piniaSymbol);
+        if (pinia) {
+            setActivePinia(pinia)
+        }
 
         if (!pinia.cache.has(id)) {
             if (typeof options === 'function') {
